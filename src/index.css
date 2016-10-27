@@ -3,10 +3,11 @@ body {
   padding: 0;
   background: #101010;
   color: #eee;
-  font-family: "Amatic SC", sans-serif;
+  font-family: sans-serif;
 }
 
 header {
+  font-family: "Amatic SC", sans-serif;
   text-align: center;
   font-size: 2rem;
 }
@@ -27,14 +28,24 @@ canvas {
 }
 
 button {
-  font-family: inherit;
-  font-weight: 700;
-  letter-spacing: 2px;
-  color: #000;
-  font-size: 1.6rem;
 }
 
-.temp-ui {
+.ui {
+  width: 500px;
   text-align: center;
   margin: 10px auto;
+  display: flex;
+}
+
+.ui-left, .ui-center, .ui-right {
+  padding: 10px;
+}
+
+.ui-left input {
+  width: 25px;
+}
+
+.ui-left {
+  width: 33.33%;
+  text-align: left;
 }

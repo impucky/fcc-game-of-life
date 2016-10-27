@@ -29,14 +29,14 @@ class Canvas extends React.Component {
 
   renderCanvas() {
     // Move all this canvas setup to state at some point ?
-    const canvas = this.refs.canvas;
-    const cellSize = this.props.cellSize;
-    const gridWidth = this.props.gridWidth;
-    const gridHeight = this.props.gridHeight;
+    var canvas = this.refs.canvas;
+    var cellSize = this.props.cellSize;
+    var gridWidth = this.props.gridWidth;
+    var gridHeight = this.props.gridHeight;
     canvas.width = gridWidth * cellSize;
     canvas.height = gridHeight * cellSize;
-    const ctx = canvas.getContext('2d');
-    const scale = canvas.width / gridWidth;
+    var ctx = canvas.getContext('2d');
+    var scale = canvas.width / gridWidth;
     // Actual rendering
     for (let x = 0; x < gridWidth; x++) {
       for (let y = 0; y < gridHeight; y++) {

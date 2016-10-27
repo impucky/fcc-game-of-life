@@ -9,6 +9,11 @@ class App extends React.Component {
     super();
 
     this.updateCanvas = this.updateCanvas.bind(this);
+    this.updateGridSize = this.updateGridSize.bind(this);
+    this.start = this.start.bind(this);
+    this.stop = this.stop.bind(this);
+    this.fillEmptyGrid = this.fillEmptyGrid.bind(this);
+    this.fillRandomGrid = this.fillRandomGrid.bind(this);
 
     this.state = {
       grid: [],
@@ -28,6 +33,15 @@ class App extends React.Component {
     this.setState({
       grid: grid
     });
+  }
+
+  updateGridSize(w, h) {
+    this.setState({
+      gridWidth: w,
+      gridHeight: h
+    });
+    this.fillEmptyGrid();
+    console.log('updated size');
   }
 
   randRange(min, max) {
@@ -157,15 +171,19 @@ class App extends React.Component {
     return (
       <div>
         <Header />
-        <div className="temp-ui">
-          <h1>Generation: {this.state.steps}</h1>
-          <button onClick={() => this.start()}>START</button>
-          <button onClick={() => this.stop()}>STOP</button>
-          <button onClick={() => this.fillRandomGrid()}>RANDOMIZE</button>
-          <button onClick={() => this.fillEmptyGrid()}>CLEAR</button>
-        </div>
-        <Controls />
-        <Canvas updateCanvas={this.updateCanvas} grid={this.state.grid} gridWidth={this.state.gridWidth} gridHeight={this.state.gridHeight} cellSize={this.state.cellSize}/>
+        <Controls start={this.start}
+                  stop={this.stop}
+                  clear={this.fillEmptyGrid}
+                  randomize={this.fillRandomGrid}
+                  updateGridSize={this.updateGridSize}
+                  steps={this.state.steps}
+                  gridWidth={this.state.gridWidth}
+                  gridHeight={this.state.gridHeight}/>
+        <Canvas updateCanvas={this.updateCanvas}
+                grid={this.state.grid}
+                gridWidth={this.state.gridWidth}
+                gridHeight={this.state.gridHeight}
+                cellSize={this.state.cellSize}/>
         <Footer />
       </div>
     );
