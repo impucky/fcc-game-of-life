@@ -1,24 +1,23 @@
 import React from 'react';
 import Header from './components/Header';
 import Canvas from './components/Canvas';
+import Controls from './components/Controls';
 import Footer from './components/Footer';
-import './App.css';
 
 class App extends React.Component {
   constructor() {
     super();
 
     this.canvasClick = this.canvasClick.bind(this);
-    this.wrap = this.wrap.bind(this);
-    this.countNeighbors = this.countNeighbors.bind(this);
-    this.stepGrid = this.stepGrid.bind(this);
-    this.start = this.start.bind(this);
+    this.processGrid = this.processGrid.bind(this);
 
     this.state = {
       grid: [],
-      gridWidth: 80,
-      gridHeight: 40,
+      gridWidth: 140,
+      gridHeight: 80,
+      cellSize: 6,
       steps: 0,
+      speedMs: 80
     };
   }
 
@@ -36,74 +35,8 @@ class App extends React.Component {
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
-  stepGrid(grid, gridW, gridH) {
-    const nextGrid = [];
-
-    // Copy grid
-    for (let x = 0; x < gridW; x++) {
-      nextGrid[x] = [];
-      for (let y = 0; y < gridH; y++) {
-        nextGrid[x][y] = grid[x][y];
-      }
-    }
-    // Check every cell
-    for (let y = 0; y < gridH; y++) {
-      for (let x = 0; x < gridW; x++) {
-        if (grid[x][y] === 1 && this.countNeighbors(grid, x, y) < 2) {;
-          nextGrid[x][y] = 0;
-        }
-        if (grid[x][y] === 1 && this.countNeighbors(grid, x, y) === 2) {
-          nextGrid[x][y] = 1;
-        }
-        if (grid[x][y] === 1 && this.countNeighbors(grid, x, y) === 3) {
-          nextGrid[x][y] = 1;
-        }
-        if (grid[x][y] === 1 && this.countNeighbors(grid, x, y) > 3) {
-          nextGrid[x][y] = 0;
-        }
-        if (grid[x][y] === 0 && this.countNeighbors(grid, x, y) === 3) {
-          nextGrid[x][y] = 1;
-        }
-      }
-    }
-    return nextGrid
-  }
-
-  countNeighbors(grid, x, y) {
-      var count = 0;
-        if (grid[this.wrap(x+1, 'x')][this.wrap(y, 'y')] === 1) {count += 1}
-        if (grid[this.wrap(x+1, 'x')][this.wrap(y+1, 'y')] === 1) {count += 1}
-        if (grid[this.wrap(x, 'x')][this.wrap(y+1, 'y')] === 1) {count += 1}
-        if (grid[this.wrap(x-1, 'x')][this.wrap(y+1, 'y')] === 1) {count += 1}
-        if (grid[this.wrap(x-1, 'x')][this.wrap(y, 'y')] === 1) {count += 1}
-        if (grid[this.wrap(x-1, 'x')][this.wrap(y-1, 'y')] === 1) {count += 1}
-        if (grid[this.wrap(x, 'x')][this.wrap(y-1, 'y')] === 1) {count += 1}
-        if (grid[this.wrap(x+1, 'x')][this.wrap(y-1, 'y')] === 1) {count += 1}
-      return count;
-  }
-
-  wrap(index, axis) {
-    if (axis === 'x') {
-      if (index < 0) {
-        return this.state.gridWidth + index
-      } else if (index === this.state.gridWidth) {
-        return 0
-      } else {
-        return index
-      }
-    }
-    if (axis === 'y') {
-      if (index < 0) {
-        return this.state.gridHeight + index
-      } else if (index === this.state.gridHeight) {
-        return 0
-      } else {
-        return index
-      }
-    }
-  }
-
   fillEmptyGrid() {
+    this.stop();
     const emptyGrid = [];
     for (var i = 0; i < this.state.gridWidth; i++) {
       emptyGrid[i] = [];
@@ -112,11 +45,13 @@ class App extends React.Component {
       }
     }
     this.setState({
-      grid: emptyGrid
+      grid: emptyGrid,
+      steps: 0
     });
   }
 
   fillRandomGrid() {
+    this.stop();
     const randomGrid = []
     for (var i = 0; i < this.state.gridWidth; i++) {
       randomGrid[i] = [];
@@ -125,25 +60,111 @@ class App extends React.Component {
       }
     }
     this.setState({
-      grid: randomGrid
+      grid: randomGrid,
+      steps: 0
     });
   }
 
+  // Get next grid step
+  processGrid(grid, gridWidth, gridHeight) {
+    const nextGrid = [];
+    // HELPERS
+    // Wrap around grid
+    function wrap(index, axis) {
+      if (axis === 'x') {
+        if (index < 0) {
+          return gridWidth + index
+        } else if (index === gridWidth) {
+          return 0
+        } else {
+          return index
+        }
+      }
+      if (axis === 'y') {
+        if (index < 0) {
+          return gridHeight + index
+        } else if (index === gridHeight) {
+          return 0
+        } else {
+          return index
+        }
+      }
+    }
+    // Returns how many live cells are around
+    function countNeighbors(x, y) {
+        var count = 0;
+          if (grid[wrap(x+1, 'x')][wrap(y, 'y')] === 1) {count += 1}
+          if (grid[wrap(x+1, 'x')][wrap(y+1, 'y')] === 1) {count += 1}
+          if (grid[wrap(x, 'x')][wrap(y+1, 'y')] === 1) {count += 1}
+          if (grid[wrap(x-1, 'x')][wrap(y+1, 'y')] === 1) {count += 1}
+          if (grid[wrap(x-1, 'x')][wrap(y, 'y')] === 1) {count += 1}
+          if (grid[wrap(x-1, 'x')][wrap(y-1, 'y')] === 1) {count += 1}
+          if (grid[wrap(x, 'x')][wrap(y-1, 'y')] === 1) {count += 1}
+          if (grid[wrap(x+1, 'x')][wrap(y-1, 'y')] === 1) {count += 1}
+        return count;
+    }
+    // ACTUAL MEAT
+    // Copy grid
+    for (let x = 0; x < gridWidth; x++) {
+      nextGrid[x] = [];
+      for (let y = 0; y < gridHeight; y++) {
+        nextGrid[x][y] = grid[x][y];
+      }
+    }
+    // Check every cell
+    for (let y = 0; y < gridHeight; y++) {
+      for (let x = 0; x < gridWidth; x++) {
+        if (grid[x][y] === 1 && countNeighbors(x, y) < 2) {
+          nextGrid[x][y] = 0;
+        }
+        if (grid[x][y] === 1 && countNeighbors(x, y) === 2) {
+          nextGrid[x][y] = 1;
+        }
+        if (grid[x][y] === 1 && countNeighbors(x, y) === 3) {
+          nextGrid[x][y] = 1;
+        }
+        if (grid[x][y] === 1 && countNeighbors(x, y) > 3) {
+          nextGrid[x][y] = 0;
+        }
+        if (grid[x][y] === 0 && countNeighbors(x, y) === 3) {
+          nextGrid[x][y] = 1;
+        }
+      }
+    }
+    return nextGrid;
+  }
+
+  // Start interval
   start() {
-    var self = this;
-    setInterval(function() {
-      self.setState({
-        grid: self.stepGrid(self.state.grid, self.state.gridWidth, self.state.gridHeight)
+    var that = this;
+    var count = this.state.steps;
+    clearInterval(this.intervalId);
+    this.intervalId = setInterval(function() {
+      count ++;
+      that.setState({
+        grid: that.processGrid(that.state.grid, that.state.gridWidth, that.state.gridHeight),
+        steps: count
       });
-    }, 80);
+    }, that.state.speedMs);
+  }
+
+  stop() {
+    clearInterval(this.intervalId);
   }
 
   render() {
     return (
       <div>
         <Header />
-        <button onClick={() => this.start()}>STEP</button>
-        <Canvas canvasClick={this.canvasClick} grid={this.state.grid} gridWidth={this.state.gridWidth} gridHeight={this.state.gridHeight} />
+        <div className="temp-ui">
+          <h1>Generation: {this.state.steps}</h1>
+          <button onClick={() => this.start()}>START</button>
+          <button onClick={() => this.stop()}>STOP</button>
+          <button onClick={() => this.fillRandomGrid()}>RANDOMIZE</button>
+          <button onClick={() => this.fillEmptyGrid()}>CLEAR</button>
+        </div>
+        <Controls />
+        <Canvas canvasClick={this.canvasClick} grid={this.state.grid} gridWidth={this.state.gridWidth} gridHeight={this.state.gridHeight} cellSize={this.state.cellSize}/>
         <Footer />
       </div>
     );
