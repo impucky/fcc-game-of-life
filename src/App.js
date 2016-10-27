@@ -8,8 +8,7 @@ class App extends React.Component {
   constructor() {
     super();
 
-    this.canvasClick = this.canvasClick.bind(this);
-    this.processGrid = this.processGrid.bind(this);
+    this.updateCanvas = this.updateCanvas.bind(this);
 
     this.state = {
       grid: [],
@@ -25,7 +24,7 @@ class App extends React.Component {
     this.fillRandomGrid();
   }
 
-  canvasClick(grid) {
+  updateCanvas(grid) {
     this.setState({
       grid: grid
     });
@@ -38,10 +37,10 @@ class App extends React.Component {
   fillEmptyGrid() {
     this.stop();
     const emptyGrid = [];
-    for (var i = 0; i < this.state.gridWidth; i++) {
-      emptyGrid[i] = [];
-      for (var j = 0; j < this.state.gridHeight; j++) {
-        emptyGrid[i][j] = 0;
+    for (let x = 0; x < this.state.gridWidth; x++) {
+      emptyGrid[x] = [];
+      for (let y = 0; y < this.state.gridHeight; y++) {
+        emptyGrid[x][y] = 0;
       }
     }
     this.setState({
@@ -53,10 +52,10 @@ class App extends React.Component {
   fillRandomGrid() {
     this.stop();
     const randomGrid = []
-    for (var i = 0; i < this.state.gridWidth; i++) {
-      randomGrid[i] = [];
-      for (var j = 0; j < this.state.gridHeight; j++) {
-        randomGrid[i][j] = this.randRange(0, 1);
+    for (let x = 0; x < this.state.gridWidth; x++) {
+      randomGrid[x] = [];
+      for (let y = 0; y < this.state.gridHeight; y++) {
+        randomGrid[x][y] = this.randRange(0, 1);
       }
     }
     this.setState({
@@ -68,8 +67,7 @@ class App extends React.Component {
   // Get next grid step
   processGrid(grid, gridWidth, gridHeight) {
     const nextGrid = [];
-    // HELPERS
-    // Wrap around grid
+    // Wrap around
     function wrap(index, axis) {
       if (axis === 'x') {
         if (index < 0) {
@@ -93,25 +91,24 @@ class App extends React.Component {
     // Returns how many live cells are around
     function countNeighbors(x, y) {
         var count = 0;
-          if (grid[wrap(x+1, 'x')][wrap(y, 'y')] === 1) {count += 1}
-          if (grid[wrap(x+1, 'x')][wrap(y+1, 'y')] === 1) {count += 1}
-          if (grid[wrap(x, 'x')][wrap(y+1, 'y')] === 1) {count += 1}
-          if (grid[wrap(x-1, 'x')][wrap(y+1, 'y')] === 1) {count += 1}
-          if (grid[wrap(x-1, 'x')][wrap(y, 'y')] === 1) {count += 1}
-          if (grid[wrap(x-1, 'x')][wrap(y-1, 'y')] === 1) {count += 1}
-          if (grid[wrap(x, 'x')][wrap(y-1, 'y')] === 1) {count += 1}
-          if (grid[wrap(x+1, 'x')][wrap(y-1, 'y')] === 1) {count += 1}
+          if (grid[wrap(x+1, 'x')][wrap(y, 'y')] === 1) count += 1
+          if (grid[wrap(x+1, 'x')][wrap(y+1, 'y')] === 1) count += 1
+          if (grid[wrap(x, 'x')][wrap(y+1, 'y')] === 1) count += 1
+          if (grid[wrap(x-1, 'x')][wrap(y+1, 'y')] === 1) count += 1
+          if (grid[wrap(x-1, 'x')][wrap(y, 'y')] === 1) count += 1
+          if (grid[wrap(x-1, 'x')][wrap(y-1, 'y')] === 1) count += 1
+          if (grid[wrap(x, 'x')][wrap(y-1, 'y')] === 1) count += 1
+          if (grid[wrap(x+1, 'x')][wrap(y-1, 'y')] === 1) count += 1
         return count;
     }
-    // ACTUAL MEAT
-    // Copy grid
+    // Copy grid => nextGrid
     for (let x = 0; x < gridWidth; x++) {
       nextGrid[x] = [];
       for (let y = 0; y < gridHeight; y++) {
         nextGrid[x][y] = grid[x][y];
       }
     }
-    // Check every cell
+    // Check every cell and update nextGrid
     for (let y = 0; y < gridHeight; y++) {
       for (let x = 0; x < gridWidth; x++) {
         if (grid[x][y] === 1 && countNeighbors(x, y) < 2) {
@@ -134,11 +131,14 @@ class App extends React.Component {
     return nextGrid;
   }
 
-  // Start interval
+  // Start game
   start() {
-    var that = this;
-    var count = this.state.steps;
+    // Ref to this for access in interval
+    const that = this;
+    // Clear interval in case it's already running
     clearInterval(this.intervalId);
+
+    let count = this.state.steps;
     this.intervalId = setInterval(function() {
       count ++;
       that.setState({
@@ -148,6 +148,7 @@ class App extends React.Component {
     }, that.state.speedMs);
   }
 
+  // Stop game
   stop() {
     clearInterval(this.intervalId);
   }
@@ -164,7 +165,7 @@ class App extends React.Component {
           <button onClick={() => this.fillEmptyGrid()}>CLEAR</button>
         </div>
         <Controls />
-        <Canvas canvasClick={this.canvasClick} grid={this.state.grid} gridWidth={this.state.gridWidth} gridHeight={this.state.gridHeight} cellSize={this.state.cellSize}/>
+        <Canvas updateCanvas={this.updateCanvas} grid={this.state.grid} gridWidth={this.state.gridWidth} gridHeight={this.state.gridHeight} cellSize={this.state.cellSize}/>
         <Footer />
       </div>
     );
