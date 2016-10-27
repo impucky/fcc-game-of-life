@@ -6,8 +6,8 @@ class Controls extends React.Component {
   }
 
   pickGridSize() {
-    const gridW = this.refs.gridW.value;
-    const gridH = this.refs.gridH.value;
+    const gridW = Number(this.refs.gridW.value);
+    const gridH = Number(this.refs.gridH.value);
     this.props.updateGridSize(gridW, gridH);
   }
 

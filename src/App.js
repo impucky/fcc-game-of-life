@@ -17,8 +17,8 @@ class App extends React.Component {
 
     this.state = {
       grid: [],
-      gridWidth: 140,
-      gridHeight: 80,
+      gridWidth: 100,
+      gridHeight: 60,
       cellSize: 6,
       steps: 0,
       speedMs: 80
@@ -35,13 +35,13 @@ class App extends React.Component {
     });
   }
 
+  // Somehow breaks everything
   updateGridSize(w, h) {
     this.setState({
       gridWidth: w,
       gridHeight: h
     });
-    this.fillEmptyGrid();
-    console.log('updated size');
+    this.fillRandomGrid()
   }
 
   randRange(min, max) {
