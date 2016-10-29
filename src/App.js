@@ -17,8 +17,8 @@ class App extends React.Component {
 
     this.state = {
       grid: [],
-      gridWidth: 100,
-      gridHeight: 60,
+      gridWidth: 160,
+      gridHeight: 80,
       cellSize: 6,
       steps: 0,
       speedMs: 80
@@ -40,8 +40,9 @@ class App extends React.Component {
     this.setState({
       gridWidth: w,
       gridHeight: h
-    });
-    this.fillRandomGrid()
+    }, this.fillRandomGrid);
+
+    console.log('update grid size');
   }
 
   randRange(min, max) {
@@ -76,6 +77,7 @@ class App extends React.Component {
       grid: randomGrid,
       steps: 0
     });
+    console.log('fill random');
   }
 
   // Get next grid step

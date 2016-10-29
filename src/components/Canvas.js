@@ -12,11 +12,20 @@ class Canvas extends React.Component {
     this.renderCanvas();
   }
 
+  // When changing grid size, prevent from updating before the new size is passed down
+  shouldComponentUpdate(nextProps) {
+    if ((this.props.gridWidth === nextProps.gridWidth) && (this.props.gridHeight === nextProps.gridHeight)) {
+      return true
+    } else {
+      return false
+    }
+  }
+
   componentDidUpdate() {
     this.renderCanvas();
   }
 
-  // Convert click pos to array coords, update grid and pass to parent component via updateCanvas()
+  // Convert click pos to array coords, update grid and pass to top component via updateCanvas()
   handleCanvasClick(event) {
       const updatedGrid = this.props.grid;
       const rect = this.refs.canvas.getBoundingClientRect();

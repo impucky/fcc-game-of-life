@@ -20,10 +20,17 @@ class Controls extends React.Component {
       <div className="ui">
         <div className="ui-left">
           <h3>Grid size:</h3>
-          <input ref="gridW" defaultValue={this.props.gridWidth}></input>
-          <span> X </span>
-          <input ref="gridH" defaultValue={this.props.gridHeight}></input>
-          <span> Cells</span>
+          <select ref="gridW">
+            <option value={40}>40</option>
+            <option value={80}>80</option>
+            <option selected="selected" value={160}>160</option>
+          </select>
+          <span> x </span>
+          <select ref="gridH">
+            <option value={40}>40</option>
+            <option selected="selected" value={80}>80</option>
+            <option value={160}>160</option>
+          </select>
           <button onClick={(e) => this.pickGridSize(e)}>Refresh</button>
           <p>Speed: </p>
           <select>
