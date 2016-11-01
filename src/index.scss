@@ -1,9 +1,36 @@
+@import "normalize.scss";
+
+$mainRed: #fe534c;
+$darkGray: #101010;
+
 body {
   margin: 0;
   padding: 0;
-  background: #101010;
+  background: $darkGray;
   color: #eee;
-  font-family: sans-serif;
+  font-family: 'Roboto Mono', monospace;
+  font-weight: light;
+}
+
+h1 {
+  margin: 0 auto;
+  font-weight: 400;
+  font-size: 3.5rem;
+}
+
+h2 {
+  font-size: 1.3rem;
+  margin: 0.2rem;
+  font-weight: 300;
+}
+
+a {
+  color: #eee;
+  text-decoration: none;
+  &:hover, &:focus, &:active {
+    color: $mainRed;
+    transition: 0.2s;
+  }
 }
 
 header {
@@ -12,13 +39,12 @@ header {
   font-size: 2rem;
 }
 
-h1 {
-  margin: 0 auto;
-  font-weight: 400;
-}
-
 footer {
   text-align: center;
+  img {
+    width: 36px;
+    fill: #eee;
+  }
 }
 
 canvas {
@@ -28,24 +54,74 @@ canvas {
 }
 
 button {
+  font-family: inherit;
 }
 
 .ui {
-  width: 500px;
+  width: 100%;
   text-align: center;
-  margin: 10px auto;
+  letter-spacing: 2px;
+  margin: 10px 0;
   display: flex;
+  justify-content: center;
 }
 
-.ui-left, .ui-center, .ui-right {
-  padding: 10px;
+.ui-col {
+  width: 220px;
 }
 
-.ui-left input {
-  width: 25px;
+.btn {
+  cursor: pointer;
+  border: 1px solid #eee;
+  background: none;
+  border-radius: 6px;
+  color: #eee;
+  outline: 0;
+  &:hover, &:active {
+    background: $mainRed;
+    border-color: $mainRed;
+    transition: 0.3s;
+    color: $darkGray;
+    transition: 0.2s;
+  }
 }
 
-.ui-left {
-  width: 33.33%;
-  text-align: left;
+.btn-active {
+  background: $mainRed;
+  border-color: $mainRed;
+  color: $darkGray;
+}
+
+.btn-play-pause {
+  border-width: 2px;
+  width: 36px;
+  height: 36px;
+  font-size: 36px;
+}
+
+.btn-group-3 button {
+  margin: 5px 0;
+  outline: 0;
+  border-width: 1px;
+  padding: 5px;
+  &:nth-child(1) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: none;
+  }
+  &:nth-child(2) {
+    border-radius: 0;
+  }
+  &:nth-child(3) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: none;
+  }
+}
+
+.btn-action {
+  width: 160px;
+  font-size: 1.2rem;
+  padding: 5px;
+  margin: 3px 0;
 }

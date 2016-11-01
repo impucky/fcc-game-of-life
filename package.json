@@ -1,11 +1,9 @@
 {
   "name": "fcc-game-of-life",
   "version": "0.1.0",
+  "homepage": "http://impucky.github.io/fcc-game-of-life",
   "private": true,
   "devDependencies": {
-    "node-sass": "^3.10.1",
-    "sass-loader": "^4.0.2",
-    "webpack": "1.13.2",
     "autoprefixer": "6.5.1",
     "babel-core": "6.17.0",
     "babel-eslint": "7.0.0",
@@ -31,11 +29,14 @@
     "filesize": "3.3.0",
     "find-cache-dir": "0.1.1",
     "fs-extra": "0.30.0",
+    "gh-pages": "^0.11.0",
     "gzip-size": "3.0.0",
     "html-webpack-plugin": "2.24.0",
     "http-proxy-middleware": "0.17.2",
     "jest": "16.0.2",
     "json-loader": "0.5.4",
+    "node-sass": "^3.10.1",
+    "normalize.css": "^5.0.0",
     "object-assign": "4.1.0",
     "path-exists": "2.1.0",
     "postcss-loader": "1.0.0",
@@ -43,9 +44,11 @@
     "react-dev-utils": "^0.3.0",
     "recursive-readdir": "2.1.0",
     "rimraf": "2.5.4",
+    "sass-loader": "^4.0.2",
     "strip-ansi": "3.0.1",
     "style-loader": "0.13.1",
     "url-loader": "0.5.7",
+    "webpack": "1.13.2",
     "webpack-dev-server": "1.16.2",
     "webpack-manifest-plugin": "1.1.0",
     "whatwg-fetch": "1.0.0"
@@ -57,7 +60,8 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js --env=jsdom"
+    "test": "node scripts/test.js --env=jsdom",
+    "deploy": "gh-pages -d build"
   },
   "jest": {
     "moduleFileExtensions": [

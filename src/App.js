@@ -10,6 +10,7 @@ class App extends React.Component {
 
     this.updateCanvas = this.updateCanvas.bind(this);
     this.updateGridSize = this.updateGridSize.bind(this);
+    this.updateSpeed = this.updateSpeed.bind(this);
     this.start = this.start.bind(this);
     this.stop = this.stop.bind(this);
     this.fillEmptyGrid = this.fillEmptyGrid.bind(this);
@@ -17,16 +18,18 @@ class App extends React.Component {
 
     this.state = {
       grid: [],
-      gridWidth: 160,
-      gridHeight: 80,
-      cellSize: 6,
+      gridWidth: 120,
+      gridHeight: 60,
+      cellSize: 7,
       steps: 0,
-      speedMs: 80
+      speedMs: 90,
+      gameIsRunning: false
     };
   }
 
   componentWillMount() {
     this.fillRandomGrid();
+    this.start();
   }
 
   updateCanvas(grid) {
@@ -35,18 +38,21 @@ class App extends React.Component {
     });
   }
 
-  // Somehow breaks everything
   updateGridSize(w, h) {
-    this.setState({
-      gridWidth: w,
-      gridHeight: h
-    }, this.fillRandomGrid);
-
-    console.log('update grid size');
+    if (w !== this.state.gridWidth && h !== this.state.gridHeight) {
+      this.setState({
+        gridWidth: w,
+        gridHeight: h
+      }, this.fillRandomGrid);
+    }
   }
 
-  randRange(min, max) {
-    return Math.floor(Math.random() * (max - min + 1) + min);
+  updateSpeed(speed) {
+    this.setState({
+      speedMs: speed
+    }, function() {
+      if (this.state.gameIsRunning) {this.start()}
+    });
   }
 
   fillEmptyGrid() {
@@ -77,7 +83,10 @@ class App extends React.Component {
       grid: randomGrid,
       steps: 0
     });
-    console.log('fill random');
+  }
+
+  randRange(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
   // Get next grid step
@@ -159,7 +168,8 @@ class App extends React.Component {
       count ++;
       that.setState({
         grid: that.processGrid(that.state.grid, that.state.gridWidth, that.state.gridHeight),
-        steps: count
+        steps: count,
+        gameIsRunning: true
       });
     }, that.state.speedMs);
   }
@@ -167,25 +177,30 @@ class App extends React.Component {
   // Stop game
   stop() {
     clearInterval(this.intervalId);
+    this.setState({
+      gameIsRunning: false
+    });
   }
 
   render() {
     return (
       <div>
         <Header />
-        <Controls start={this.start}
-                  stop={this.stop}
-                  clear={this.fillEmptyGrid}
-                  randomize={this.fillRandomGrid}
-                  updateGridSize={this.updateGridSize}
-                  steps={this.state.steps}
-                  gridWidth={this.state.gridWidth}
-                  gridHeight={this.state.gridHeight}/>
         <Canvas updateCanvas={this.updateCanvas}
                 grid={this.state.grid}
                 gridWidth={this.state.gridWidth}
                 gridHeight={this.state.gridHeight}
                 cellSize={this.state.cellSize}/>
+        <Controls start={this.start}
+                  stop={this.stop}
+                  clear={this.fillEmptyGrid}
+                  randomize={this.fillRandomGrid}
+                  updateGridSize={this.updateGridSize}
+                  updateSpeed={this.updateSpeed}
+                  steps={this.state.steps}
+                  gameIsRunning={this.state.gameIsRunning}
+                  gridWidth={this.state.gridWidth}
+                  gridHeight={this.state.gridHeight}/>
         <Footer />
       </div>
     );
